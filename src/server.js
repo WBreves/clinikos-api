@@ -22,32 +22,41 @@ function isValidCPF(cpf) {
   return true;
 }
 
-// Rota Raiz (Healthcheck)
 app.get('/', (req, res) => {
-  res.json({ status: 'API ClinikOS Online' });
+  res.json({ status: 'API ClinikOS Online v2.0' });
 });
 
-// Rota de Cadastro de Pacientes
+// Cadastro Completo de Paciente
 app.post('/api/patients', (req, res) => {
-  const { name, cpf, phone, tenant_id } = req.body;
+  const { tenant_id, name, cpf, birth_date, gender, mother_name, phone, email, address, health_insurance } = req.body;
 
-  if (!name || !cpf || !tenant_id) {
-    return res.status(400).json({ error: 'Campos obrigatórios ausentes.' });
+  if (!name || !cpf || !tenant_id || !birth_date || !phone) {
+    return res.status(400).json({ error: 'Campos obrigatórios ausentes: Nome, CPF, Data de Nascimento e Telefone.' });
   }
 
-  // Validação algorítmica do CPF
   if (!isValidCPF(cpf)) {
     return res.status(400).json({ error: 'CPF inválido! Verifique os dígitos informados.' });
   }
 
-  // Sucesso na validação
+  // Sucesso na recepção e estruturação dos dados
   return res.status(201).json({
-    message: 'Paciente validado e cadastrado com sucesso!',
-    patient: { name, cpf, phone, tenant_id }
+    message: 'Paciente cadastrado com sucesso no ClinikOS!',
+    patient: {
+      tenant_id,
+      name,
+      cpf,
+      birth_date,
+      gender,
+      mother_name,
+      phone,
+      email,
+      address,
+      health_insurance
+    }
   });
 });
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log(`Servidor ClinikOS v2.0 rodando na porta ${PORT}`);
 });
